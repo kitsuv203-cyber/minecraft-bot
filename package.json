@@ -1,16 +1,13 @@
 {
-  "name": "bot",
+  "name": "minecraft-bot",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "24/7 Minecraft Bot",
+  "main": "bot.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node bot.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "mineflayer": "^4.39.0"
+    "mineflayer": "latest",
+    "mineflayer-pvp": "latest"
   }
 }
