@@ -12,7 +12,7 @@ const mineflayer = require('mineflayer');
 const pvpPlugin = require('mineflayer-pvp').plugin || require('mineflayer-pvp');
 
 const botOptions = {
-  host: '222.mangoohost.live',
+  host: 'masterforge.playserver.pro',
   port: 25565,
   username: 'hiii',
   version: '1.21.1',
