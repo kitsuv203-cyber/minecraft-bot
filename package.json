@@ -1,13 +1,13 @@
 {
-  "name": "minecraft-bot",
+  "name": "mc-bot",
   "version": "1.0.0",
-  "description": "24/7 Minecraft Bot",
+  "description": "Minecraft bot for Render",
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js"
   },
   "dependencies": {
-    "mineflayer": "latest",
-    "mineflayer-pvp": "latest"
+    "mineflayer": "^4.23.0"
   }
 }
+
