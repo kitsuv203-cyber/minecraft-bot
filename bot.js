@@ -1,63 +1,62 @@
+const mineflayer = require('mineflayer');
 const http = require('http');
 
-http.createServer((req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
-  res.write('Botti hiii pyörii täällä 24/7!');
-  res.end();
-}).listen(process.env.PORT || 10000, '0.0.0.0', () => {
-  console.log('Web-palvelin käynnistetty Render-portissa.');
+
+const PORT = process.env.PORT || 3000;
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Minecraft Bot is online!\n');
 });
 
-const mineflayer = require('mineflayer');
-const pvpPlugin = require('mineflayer-pvp').plugin || require('mineflayer-pvp');
+server.listen(PORT, () => {
+  console.log(`Render health check web server running on port ${PORT}`);
+});
 
-const botOptions = {
-  host: 'masterforge.playserver.pro',
-  port: 25565,
-  username: 'hiii',
-  version: '1.21.1',
-  auth: 'offline'
-};
+let bot;
 
 function startBot() {
-  console.log('Yritetään yhdistää Minecraft-palvelimelle...');
-  const bot = mineflayer.createBot(botOptions);
+  console.log('Connecting to masterforge.playserver.pro...');
+  
+  
+  bot = mineflayer.createBot({
+    host: 'masterforge.playserver.pro',
+    port: 25565,
+    username: 'RenderBot', 
+    version: '26.1.2',
+    auth: 'offline'
+  });
 
-  if (typeof pvpPlugin === 'function') {
-    bot.loadPlugin(pvpPlugin);
-  }
+  bot.on('login', () => {
+    console.log(`[Success] ${bot.username} logged into the server.`);
+  });
 
-  bot.once('spawn', () => {
-    console.log('ONNISTUI! Botti hiii on nyt Mangoohostilla 24/7!');
-    
-    setInterval(() => {
-      if (!bot.pvp || !bot.pvp.target) {
-        bot.setControlState('jump', true);
-        setTimeout(() => bot.setControlState('jump', false), 500);
-      }
-    }, 10000);
+  bot.on('spawn', () => {
+    console.log(`${bot.username} spawned in the game.`);
   });
 
   bot.on('chat', (username, message) => {
     if (username === bot.username) return;
-    if (message.toLowerCase() === 'hello') {
-      bot.chat('Hello ' + username + '! I am hiii on Render 24/7!');
+    
+    if (message === '!ping') {
+      bot.chat(`Pong! I am running perfectly.`);
     }
   });
 
-  bot.on('error', (err) => {
-    console.log('Verkkovirhe:', err.message);
+  
+  bot.on('disconnect', (packet) => {
+    console.log(`Disconnected: ${packet.reason}`);
   });
-
-  bot.on('kicked', (reason) => {
-    console.log('Potkitun syy:', JSON.stringify(reason));
-  });
-
 
   bot.on('end', () => {
-    console.log('Yhteys katkesi palvelimeen. Yritetään uudelleen 15 sekunnin kuluttua...');
-    setTimeout(startBot, 15000);
+    console.log('Connection closed. Retrying connection in 10 seconds...');
+    setTimeout(startBot, 10000);
+  });
+
+  bot.on('error', (err) => {
+    console.error(`Bot Error: ${err.message}`);
   });
 }
 
+
 startBot();
+
