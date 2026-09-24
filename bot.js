@@ -17,7 +17,6 @@ let bot;
 function startBot() {
   console.log('Connecting to masterforge.playserver.pro...');
   
-  
   bot = mineflayer.createBot({
     host: 'masterforge.playserver.pro',
     port: 25565,
@@ -31,24 +30,48 @@ function startBot() {
   });
 
   bot.on('spawn', () => {
-    console.log(`${bot.username} spawned in the game.`);
+    console.log(`${bot.username} spawned in the game. Starting Anti-AFK routine...`);
+    
+    
+    if (global.afkInterval) clearInterval(global.afkInterval);
+
+   
+    global.afkInterval = setInterval(() => {
+      if (!bot || !bot.entity) return;
+
+      
+      bot.swingHand('right');
+
+      
+      bot.setControlState('forward', true);
+      setTimeout(() => {
+        if (bot) bot.setControlState('forward', false);
+        
+        
+        if (bot) bot.setControlState('back', true);
+        setTimeout(() => {
+          if (bot) bot.setControlState('back', false);
+        }, 500);
+      }, 500);
+
+    }, 20000); 
   });
 
   bot.on('chat', (username, message) => {
     if (username === bot.username) return;
-    
     if (message === '!ping') {
       bot.chat(`Pong! I am running perfectly.`);
     }
   });
 
-  
   bot.on('disconnect', (packet) => {
     console.log(`Disconnected: ${packet.reason}`);
+    if (global.afkInterval) clearInterval(global.afkInterval);
   });
 
   bot.on('end', () => {
     console.log('Connection closed. Retrying connection in 10 seconds...');
+    if (global.afkInterval) clearInterval(global.afkInterval);
     setTimeout(startBot, 10000);
   });
 
@@ -59,4 +82,5 @@ function startBot() {
 
 
 startBot();
+
 
